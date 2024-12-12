@@ -42,13 +42,12 @@ class NaiveBayes:
             >>> nb.class_probabilities
             >>> nb.feature_probabilities
         """
-        # >>> YOUR CODE HERE >>>
+        
         self.alpha = alpha
         self.n_features = None
         self.class_labels = None
         self.class_probabilities = None
         self.feature_probabilities = None
-        # <<< END OF YOUR CODE <<<
 
     def compute_class_probabilities(self, y_train: np.ndarray) -> Dict[Any, float]:
         """
@@ -71,11 +70,11 @@ class NaiveBayes:
         classes, counts = np.unique(y_train, return_counts=True)
         
         class_probabilities = {}
-        # >>> YOUR CODE HERE >>>
+        
         total_labels = len(y_train) + self.alpha * len(classes)
         for i, class_label in enumerate(classes):
             class_probabilities[class_label] = float((counts[i] + self.alpha) / total_labels)
-        # <<< END OF YOUR CODE <<<
+            
         return class_probabilities
     
     def compute_feature_probabilities(self, X_j_train: np.ndarray, y_train: np.ndarray) -> Dict[Tuple[Any, Any], float]:
@@ -111,14 +110,10 @@ class NaiveBayes:
 
         # If 'NA' is not in the unique features, add it
         if 'NA' not in unique_features:
-            # >>> YOUR CODE HERE >>>
             unique_features.add('NA')
-            # <<< END OF YOUR CODE <<<
 
-        # For each class, compute the conditional probability of each feature value
-        # given that class
+        # For each class, compute the conditional probability of each feature value given that class
         for c in class_labels:
-            # >>> YOUR CODE HERE >>>
             class_indices = (y_train == c)
             X_j_class = X_j_train[class_indices]  # Features for this class
             # Count the occurrences of each feature value in this class
@@ -132,7 +127,6 @@ class NaiveBayes:
             # Calculate the conditional probabilities for each feature value given this class
             for feature in unique_features:
                 feature_probabilities[feature, c] = (feature_counts[feature] + self.alpha) / total_count
-            # <<< END OF YOUR CODE <<<
 
         return feature_probabilities
 
@@ -177,8 +171,6 @@ class NaiveBayes:
         self.class_labels = np.unique(list(y_train))
         # Compute the prior probability of each class
 
-        # >>> YOUR CODE HERE >>>
-        # You solution must satisfy the following requirements:
         # This dictionary will store the prior probability of each class
         # self.class_probabilities[class_label] = P(Y = class_label)
 
@@ -199,8 +191,6 @@ class NaiveBayes:
 
             # Store the computed feature probabilities for this feature
             self.feature_probabilities[i] = feature_probabilities
-        # <<< END OF YOUR CODE <<<
-
 
     def predict_probabilities(self, X_test: np.ndarray) -> np.ndarray:
         """
@@ -241,10 +231,8 @@ class NaiveBayes:
         assert self.class_labels is not None, "Model has not been fit yet"
         assert self.n_features is not None, "Model has not been fit yet"
 
-        # You need to compute a n x c matrix of probabilities, where n is the
-        # number of test examples and c is the number of classes. You should
-        # make sure that the order of columns in this matrix matches the order
-        # of class labels in `self.class_labels`.
+        # Compute a n x c matrix of probabilities, where n is the
+        # number of test examples and c is the number of classes. 
 
         # Create a matrix of zeros with the correct shape
         probabilities = np.zeros((X_test.shape[0], len(self.class_labels)))
@@ -253,34 +241,24 @@ class NaiveBayes:
             # For each class, compute the probability of the test example
             for c, label in enumerate(self.class_labels):
                 # Store the probability in the correct position in the matrix
-                # >>> YOUR CODE HERE >>>
                 log_prob = np.log(self.class_probabilities[label])
-                # <<< END OF YOUR CODE <<<
                 # For each feature, compute the probability of the test example
                 for j in range(self.n_features):
                     # Store the probability in the correct position in the matrix
                     # If the feature value is not in the training data, use the
                     # probability of NA
                     if (X_test[i, j], label) not in self.feature_probabilities[j]:
-                        # >>> YOUR CODE HERE >>>
                         log_prob += np.log(self.feature_probabilities[j].get(('NA', label), 1e-10))
-                        # <<< END OF YOUR CODE <<<
                     else:
                         # If the feature value is in the training data, use the
                         # probability of the feature value
-                        # >>> YOUR CODE HERE >>>
                         log_prob += np.log(self.feature_probabilities[j][(X_test[i, j], label)])
-                        # <<< END OF YOUR CODE <<<
 
                 probabilities[i, c] = log_prob
 
-        # Depending on your implementation, you may need to normalize the
-        # probabilities. You may ignore this if you don't need to.
-        # >>> YOUR CODE HERE >>>
         # Apply softmax to convert log probabilities to class probabilities
         probabilities = np.exp(probabilities - np.max(probabilities, axis=1, keepdims=True))  # For numerical stability
         probabilities /= np.sum(probabilities, axis=1, keepdims=True)  # Normalize
-        # <<< END OF YOUR CODE <<<
 
         return probabilities
 
@@ -318,7 +296,6 @@ class NaiveBayes:
 
         assert self.class_labels is not None, "Model has not been fit yet"
 
-        # >>> YOUR CODE HERE >>>
         # Get the indices of the maximum probabilities
         max_indices = np.argmax(probabilities, axis=1)
 
@@ -328,7 +305,7 @@ class NaiveBayes:
             else self.class_labels[max_indices[i]]
             for i in range(probabilities.shape[0])
         ])
-        # <<< END OF YOUR CODE <<<
+        
         return y_pred
 
     def evaluate(self, y_test: np.ndarray, probabilities: np.ndarray) -> Tuple[float, float]:
@@ -364,7 +341,6 @@ class NaiveBayes:
 
         y_pred = self.predict(probabilities)
 
-        # >>> YOUR CODE HERE >>>
         # Calculate zero-one loss
         incorrect_predictions = np.sum(y_pred != y_test)
         total_predictions = len(y_test)
@@ -380,7 +356,7 @@ class NaiveBayes:
             squared_loss += (1 - p_true) ** 2
 
         squared_loss /= m  # normalize by number of predictions
-        # <<< END OF YOUR CODE <<<
+        
         return float(zero_one_loss), float(squared_loss)
 
 if __name__ == "__main__":

@@ -91,10 +91,8 @@ class Leaf(Node):
                    [0.7, 0.3],
                    [0.7, 0.3]])
         """
-        # >>> YOUR CODE HERE >>>
         # Convert class probabilities to a NumPy array
         probabilities = np.array(list(self.class_probabilities.values()))
-        # <<< END OF YOUR CODE <<<
 
         return np.tile(probabilities, (len(X),1))
 
@@ -127,9 +125,8 @@ class Leaf(Node):
         """
         probabilities = self.predict_class_probabilities(X)
 
-        # >>> YOUR CODE HERE >>>
         labels = np.array([self.class_labels[np.argmax(prob)] for prob in probabilities])
-        # <<< END OF YOUR CODE <<<
+        
         return labels
     
     def __repr__(self) -> str:
@@ -376,11 +373,10 @@ class DecisionTree:
         assert len(X) > 0, "X and y must not be empty"
 
         if max_depth <= 0 or self._is_pure(y) or len(exclude) == X.shape[1]:
-            # If we have reached the maximum depth, or the labels are pure,
-            # or we have excluded all features, then we create a leaf node,
+            # If we have reached the maximum depth, or the labels are pure, or we have excluded all features, then we create a leaf node,
             # which predicts the class probabilities of the labels.
             # Return a leaf node.
-            # >>> YOUR CODE HERE >>>
+            
             # Initialize class counts to zero for all possible class labels
             class_labels = self.scorer.class_labels
             class_counts = {label: np.sum(y == label) for label in class_labels}
@@ -390,13 +386,9 @@ class DecisionTree:
             }
 
             return Leaf(class_probabilities)
-            # <<< END OF YOUR CODE <<<
-
-        # Otherwise, we find the best feature to split on, and recursively
-        # build the tree on the splits.
-        # >>> YOUR CODE HERE >>>
+            
+        # Otherwise, we find the best feature to split on, and recursively build the tree on the splits.
         feature_of_split, splits = self.scorer.split_on_best(X, y, exclude)
-        # <<< END OF YOUR CODE <<<
 
         children = {}
         # Find the new set of features to exclude.
@@ -404,9 +396,7 @@ class DecisionTree:
 
         for feature_value, (X_split, y_split) in splits.items():
             # Recursively build the tree on the splits.
-            # >>> YOUR CODE HERE >>>
             node = self._build_tree(X_split, y_split, max_depth - 1, new_exclude)
-            # <<< END OF YOUR CODE <<<
 
             children[feature_value] = node
 
@@ -414,19 +404,15 @@ class DecisionTree:
         # a leaf node for that case. This will allow us to handle
         # new feature values that we have not seen before as 'NA'.
         if 'NA' not in children:
-            # >>> YOUR CODE HERE >>>
             class_probabilities = {
                 'A': 0.5,  # Probability for class A
                 'B': 0.5  # Probability for class B
             }
             children['NA'] = Leaf(class_probabilities)
-            # <<< END OF YOUR CODE <<<
 
         # Lastly, we create a split node, which splits on the best feature.
         # Return a split node.
-        # >>> YOUR CODE HERE >>>
         return Split(feature_of_split, children)
-        # <<< END OF YOUR CODE <<<
 
     def predict(self, X: ArrayLike) -> np.ndarray:
         """

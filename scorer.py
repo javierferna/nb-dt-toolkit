@@ -41,11 +41,9 @@ class Scorer:
         if type not in ["information", "gini"]:
             raise ValueError("type must be either 'information' or 'gini'")
 
-        # >>> YOUR CODE HERE >>>
         self.type = type
         self.class_labels = class_labels
         self.alpha = alpha
-        # <<< END OF YOUR CODE <<<
 
     def compute_class_probabilities(self, labels: ArrayLike) -> Dict[Any, float]:
         """
@@ -71,13 +69,12 @@ class Scorer:
         """
 
         class_probabilities = {}
-        # >>> YOUR CODE HERE >>>
         # Count the occurrences of each label
         label_counts = collections.Counter(labels)
 
         # Total number of labels (with Laplace smoothing, act as if we've seen each class at least once)
         total_labels = len(labels) + self.alpha * len(self.class_labels)
-        # <<< END OF YOUR CODE <<<
+        
         for class_label in self.class_labels:
             class_probabilities[class_label] = (label_counts[class_label] + self.alpha) / total_labels
 
@@ -168,12 +165,10 @@ class Scorer:
             array(['A', 'A', 'A', 'A']...)
         """
 
-        # >>> YOUR CODE HERE >>>
         # Find the rows where the feature at index `split_attribute` is equal to `split_value`
         matching_indices = np.where(data[:, split_attribute] == split_value)
         data_subset = data[matching_indices]
         labels_subset = labels[matching_indices]
-        # <<< END OF YOUR CODE <<<
 
         return data_subset, labels_subset
 
@@ -238,11 +233,10 @@ class Scorer:
         entropy = 0
 
         class_probabilities = self.compute_class_probabilities(labels)
-        # >>> YOUR CODE HERE >>>
+        
         for prob in class_probabilities.values():
             if prob > 0:
                 entropy -= prob * np.log2(prob)
-        # <<< END OF YOUR CODE <<<
 
         return float(entropy)
 
@@ -265,13 +259,12 @@ class Scorer:
         """
 
         class_probabilities = self.compute_class_probabilities(labels)
-
+        
         gini = 1
-        # >>> YOUR CODE HERE >>>
+        
         for prob in class_probabilities.values():
             if prob > 0:
                 gini -= prob ** 2
-        # <<< END OF YOUR CODE <<<
 
         return float(gini)
 
@@ -313,7 +306,7 @@ class Scorer:
 
         entropy_before = self.score(labels)
         entropy_after = 0
-        # >>> YOUR CODE HERE >>>
+ 
         # Get the unique values for the split attribute (i.e., the distinct categories for that feature)
         unique_values = np.unique(data[:, split_attribute])
         # Loop through each unique value of the split attribute
@@ -332,7 +325,7 @@ class Scorer:
 
         # Information gain is the difference between the entropy before the split and after the split
         information_gain = entropy_before - entropy_after
-        # <<< END OF YOUR CODE <<<
+        
         return float(information_gain)
 
     def gini_gain(self, data: ArrayLike, labels: ArrayLike, split_attribute: int) -> float:
@@ -373,7 +366,7 @@ class Scorer:
 
         gini_before = self.score(labels)
         gini_after = 0
-        # >>> YOUR CODE HERE >>>
+
         # Get the unique values for the split attribute (i.e., the distinct categories for that feature)
         unique_values = np.unique(data[:, split_attribute])
         # Loop through each unique value of the split attribute
@@ -392,7 +385,7 @@ class Scorer:
 
         # Information gain is the difference between the entropy before the split and after the split
         gini_gain = gini_before - gini_after
-        # <<< END OF YOUR CODE <<<
+
         return gini_gain
 
     def __repr__(self) -> str:
